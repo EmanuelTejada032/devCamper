@@ -3,11 +3,15 @@ const  dotenv = require('dotenv');
 // const logger = require('./middleware/logger');
 const morgan = require('morgan')
 const connectDB = require('./config/db');
+const errorHandler = require('./middleware/error')
 
 
 //load env vars
 dotenv.config({ path: './config/config.env' });
 const app = express();
+
+//Body parser
+app.use(express.json());
 
 
 //connect to db
@@ -15,8 +19,9 @@ connectDB();
 
 
 //Routes files
- const bootcamps = require('./routes/campgrounds');
+ const bootcamps = require('./routes/bootcamps');
  
+
 
  
  // app.use(logger);
@@ -25,7 +30,7 @@ connectDB();
  }
  
 app.use('/api/v1/bootcamps', bootcamps);
-
+app.use(errorHandler)
 
 const PORT = process.env.PORT || 5000;
 

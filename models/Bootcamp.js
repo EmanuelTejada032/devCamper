@@ -11,7 +11,7 @@ const BootcampSchema = new Schema({
         trim: true,
         maxlength: [50, 'Name cannot be more than 50 chars']
     },
-    slug: String.apply,
+    slug: String,
     description:{
         type: String,
         required: [true, 'please add a description'],
@@ -43,12 +43,10 @@ const BootcampSchema = new Schema({
         //geoJSON point
         type:{
             type: String,
-            enum: ['point'],
-            required: true
+            enum: ['point'],     
         },
         coordinates: {
             type: Number,
-            required: true,
             index: '2dsphere'
         },
         formattedAddress: String,
