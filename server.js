@@ -8,6 +8,13 @@ const errorHandler = require('./middleware/error')
 
 //load env vars
 dotenv.config({ path: './config/config.env' });
+
+//Routes files
+ const bootcamps = require('./routes/bootcamps');
+
+
+
+
 const app = express();
 
 //Body parser
@@ -18,8 +25,6 @@ app.use(express.json());
 connectDB();
 
 
-//Routes files
- const bootcamps = require('./routes/bootcamps');
  
 
 
