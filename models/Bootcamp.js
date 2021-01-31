@@ -100,6 +100,9 @@ const BootcampSchema = new Schema({
         default: Date.now
     }
 
+}, {
+    toJSON:{ virtuals: true },
+    toObject: { virtuals: true }
 });
 
 // Create bootcamp slug from the name
@@ -125,6 +128,14 @@ BootcampSchema.pre('save', function(next) {
     // Do not save address in DB
     this.address = undefined;
     next();
+  });
+
+  //Reverse Populate courses with virtual
+  BootcampSchema.virtual('courses', {
+      ref: 'Course',
+      localField: '_id',
+      foreignField: 'bootcamp',
+      justOne: false
   });
 
 
