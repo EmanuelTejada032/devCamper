@@ -120,15 +120,18 @@ exports.createBootcamp = asyncHandler( async (req, res, next) => {
 // @route   PUT /api/v1/bootcamps/:id
 // @access  private
 exports.updateBootcamp = asyncHandler( async (req, res, next) => {
-    
-        const bootcamp = await Bootcamp.findByIdAndUpdate(req.params.id, req.body, {
-            new: true,
-            runValidators: true
-        });
+
+        let bootcamp = await Bootcamp.findById(req.params.id)
+        
 
         if(!bootcamp){
             return next(new ErrorResponse(`Bootcamp not found with id: ${req.params.id}`, 404))
         }
+
+         bootcamp = await Bootcamp.findByIdAndUpdate(req.params.id, req.body, {
+            new: true,
+            runValidators: true
+        });
 
         res.status(200).json({ success: true, bootcamp})
     
