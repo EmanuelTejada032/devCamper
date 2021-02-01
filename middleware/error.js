@@ -12,6 +12,11 @@ const errorHandler = (err, req, res, next) => {
         error = new ErrorResponse(message, 404)
     }
 
+    if(err.name === 'CastError' && req.path.includes('/courses/')){
+        const message = `Course not found with id: ${err.value}`
+        error = new ErrorResponse(message, 404)
+    }
+
     //Moongose Duplicated Key
     if(err.code === 11000){
         const message = `Please avoid duplicated key:  ${err.keyValue.name}`
