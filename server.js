@@ -1,13 +1,19 @@
 const express = require('express');
 const  dotenv = require('dotenv');
+const path = require('path')
 // const logger = require('./middleware/logger');
-const morgan = require('morgan')
+const morgan = require('morgan');
 const connectDB = require('./config/db');
-const errorHandler = require('./middleware/error')
+const errorHandler = require('./middleware/error');
+const fileUpload = require('express-fileupload');
+
+
 
 
 //load env vars
 dotenv.config({ path: './config/config.env' });
+
+
 
 //Routes files
  const bootcamps = require('./routes/bootcamps');
@@ -17,6 +23,13 @@ dotenv.config({ path: './config/config.env' });
 
 
 const app = express();
+
+//using express-fileupload
+app.use(fileUpload())
+
+//Serving static folder public
+app.use(express.static(path.join(__dirname, 'public')))
+
 
 //Body parser
 app.use(express.json());
@@ -38,6 +51,7 @@ connectDB();
 app.use('/api/v1/bootcamps', bootcamps);
 app.use('/api/v1/courses', courses);
 app.use(errorHandler)
+
 
 const PORT = process.env.PORT || 5000;
 
