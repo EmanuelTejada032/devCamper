@@ -2,86 +2,14 @@ const path = require('path')
 const Bootcamp = require('../models/Bootcamp')
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/asyncHandler');
-const geocoder = require('../utils/geocoder')
+const geocoder = require('../utils/geocoder');
+
 
 // @desc    Get all bootcamps
 // @route   GET /api/v1/bootcamps
 // @access  public
 exports.getBootcamps = asyncHandler( async (req, res, next) => {
-    let query;
-
-    //copy of req.query
-    const reqQuery = { ...req.query }
-
-    //Fields to exclude from query
-    const removeFields = ['select','sort','page', 'limit']
-
-    // Loop over removeFields to exclude from the query
-    removeFields.forEach(param => delete reqQuery[param]);
-
-    //create query string
-    let queryStr = JSON.stringify(reqQuery);
-
-    //Create operators query to find match
-    queryStr = queryStr.replace(/\b(gt|gte|lt|lte|in)\b/g, match => `$${match}`)
-    
-    //finding resources by match to the query
-    query = Bootcamp.find(JSON.parse(queryStr)).populate('courses');
-
-    //Select specific fields
-    if(req.query.select){
-        const fields = req.query.select.split(',').join(' ')
-        query = query.select(fields)
-    }
-
-    //Sorting by fields.
-    if(req.query.sort){
-        const sortBy = req.query.sort.split(',').join(' ')
-        query = query.sort(sortBy)
-    } else {
-        //default sort
-        query = query.sort('-createdAt')
-    }
-
-
-    const page = parseInt(req.query.page, 10) || 1;
-    const limit = parseInt(req.query.limit, 10) || 20;
-    const startIndex = (page - 1 ) * limit;
-    const endIndex = page * limit;
-    const total = await Bootcamp.countDocuments();
-
-
-    query = query.skip(startIndex).limit(limit)
-
-    //pagination result
-    const pagination = {};
-
-    if(endIndex < total){
-        pagination.next = {
-            page: page + 1,
-            limit
-        }
-    }
-
-    if(startIndex > 0){
-        pagination.prev = {
-            page: page - 1,
-            limit
-        }
-    }
-
-    //Execute the query
-    const bootcamps = await query
-
-        res.status(200).json({
-            success: true,
-            count: bootcamps.length,
-            pagination,
-            bootcamps
-        });
-
-   
-    
+        res.status(200).json(res.advancedResults);    
 });
 
 // @desc    Get specific bootcamp
