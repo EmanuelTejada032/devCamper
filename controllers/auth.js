@@ -3,6 +3,7 @@ const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/asyncHandler');
 
 
+
 // @desc    Register a user
 // @route   post /api/v1/auth
 // @access  public
@@ -15,10 +16,14 @@ exports.register = asyncHandler(async(req, res ,next) =>{
         role
     });
 
+    //Create a Token
+    const token = user.getSignedJwtToken();
+
     res.status(200).json({
         success: true,
         msg: "User created successfuly",
-        data: user
+        user,
+        token
     })
     
 });
