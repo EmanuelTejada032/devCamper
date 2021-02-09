@@ -6,6 +6,7 @@ const morgan = require('morgan');
 const connectDB = require('./config/db');
 const errorHandler = require('./middleware/error');
 const fileUpload = require('express-fileupload');
+const cookieParser = require('cookie-parser')
 
 
 
@@ -26,6 +27,9 @@ const app = express();
 
 //using express-fileupload
 app.use(fileUpload())
+
+// Set cookie parser ready to use
+app.use(cookieParser())
 
 //Serving static folder public
 app.use(express.static(path.join(__dirname, 'public')))
