@@ -70,7 +70,18 @@ const sendTokenResponse = function(user, statusCode, res){
             success: true,
             token
         })
-
-
 }
+
+// @desc    Get current User 
+// @route   Get /api/v1/auth/me
+// @access  Private
+
+exports.getMe = asyncHandler(async(req, res, next) => {
+    const user = await User.findById(req.user.id);
+
+    res.status(200).json({
+        success: true,
+        data: user
+    })
+});
 
