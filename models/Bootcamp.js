@@ -98,6 +98,11 @@ const BootcampSchema = new Schema({
     createdAt:{
         type: Date,
         default: Date.now
+    },
+    user: {
+        type: Schema.ObjectId,
+        ref: 'User',
+        required: true
     }
 
 }, {
