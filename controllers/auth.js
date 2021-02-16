@@ -49,29 +49,6 @@ exports.login = asyncHandler(async(req, res ,next) =>{
 });
 
 
-//Set cookie with the token
-const sendTokenResponse = function(user, statusCode, res){
-     //Create a Token
-     const token = user.getSignedJwtToken();
-     const options = {
-         expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRE * 1000 * 60 * 60 * 24 ),
-         httpOnly: true
-     }
-
-     if(process.env.NODE_ENV === 'production'){
-        options.secure = true;
-     }
-
-
-     res
-        .status(statusCode)
-        .cookie('token', token, options)
-        .json({
-            success: true,
-            token
-        })
-}
-
 // @desc    Get current User 
 // @route   Get /api/v1/auth/me
 // @access  Private
@@ -85,3 +62,50 @@ exports.getMe = asyncHandler(async(req, res, next) => {
     })
 });
 
+
+// @desc    Forgot Password
+// @route   Post /api/v1/auth/forgotpassword
+// @access  Public
+
+exports.forgotPassword = asyncHandler(async(req, res, next) => {
+    const user = await User.findOne({ email: req.body.email});
+
+    if(!user){
+        return next(new ErrorResponse('There is not user with that email', 400));
+    }
+
+    //Get reset token
+    const resetToken = user.getResetPasswordToken();
+    
+    await user.save({validateBeforeSave: false});
+    
+    res.status(200).json({
+        success: true,
+        data: user
+    })
+});
+
+
+
+//Set cookie with the token
+const sendTokenResponse = function(user, statusCode, res){
+    //Create a Token
+    const token = user.getSignedJwtToken();
+    const options = {
+        expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRE * 1000 * 60 * 60 * 24 ),
+        httpOnly: true
+    }
+
+    if(process.env.NODE_ENV === 'production'){
+       options.secure = true;
+    }
+
+
+    res
+       .status(statusCode)
+       .cookie('token', token, options)
+       .json({
+           success: true,
+           token
+       })
+}
