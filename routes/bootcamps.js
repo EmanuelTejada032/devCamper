@@ -18,7 +18,7 @@ const advancedResults = require('../middleware/advancedResults')
 const router = express.Router();
 
 //Bring the protect middleware with JWT
-const { protect, authorize } = require('../middleware/auth');
+const { protect, authorize, isBootcampOwner } = require('../middleware/auth');
 
 //Include other resource routers
 const courseRouter = require('./courses');
@@ -31,9 +31,9 @@ router.route('/radius/:zipcode/:distance').get(getBootcampWithinRadius)
 
 router.route('/').get(advancedResults(Bootcamp, 'courses'), getBootcamps).post(protect,authorize('publisher', 'admin'),createBootcamp);
 
-router.route('/:id/photos').put(protect, authorize('publisher', 'admin'),bootcampPhotoUpload)
+router.route('/:id/photo').put(protect, authorize('publisher', 'admin'), isBootcampOwner, bootcampPhotoUpload)
 
-router.route('/:id').get(getBootcamp).put(protect, authorize('publisher', 'admin'), updateBootcamp).delete(protect,authorize('publisher', 'admin'),deleteBootcamp);
+router.route('/:id').get(getBootcamp).put(protect, authorize('publisher', 'admin'),isBootcampOwner, updateBootcamp).delete(protect,authorize('publisher', 'admin'), isBootcampOwner, deleteBootcamp);
 
 
 

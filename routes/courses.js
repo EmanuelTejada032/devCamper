@@ -11,7 +11,7 @@ const {
 //Bringing model and middleware for advanced query
 const Course = require('../models/Course');
 const advancedResults = require('../middleware/advancedResults');
-const { protect, authorize} = require('../middleware/auth');
+const { protect, authorize, isBootcampOwner,isCourseOwner} = require('../middleware/auth');
 
 
 router.route('/')
@@ -19,11 +19,11 @@ router.route('/')
             path: 'bootcamp',
             select: 'name description'
       }), getCourses)
-      .post(protect,authorize('publisher', 'admin'), addCourse)
+      .post(protect,authorize('publisher', 'admin'),isBootcampOwner, addCourse)
 
 router.route('/:id')
       .get(getCourse)
-      .put(protect,authorize('publisher', 'admin'), updateCourse)
-      .delete(protect,authorize('publisher', 'admin'), deleteCourse)
+      .put(protect,authorize('publisher', 'admin'),isCourseOwner, updateCourse)
+      .delete(protect,authorize('publisher', 'admin'),isCourseOwner, deleteCourse)
 
 module.exports = router;

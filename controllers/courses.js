@@ -49,7 +49,8 @@ exports.getCourse = asyncHandler(async(req, res, next) =>{
 //@route   post api/v1/bootcamps/:bootcampId/courses
 //@access  Private
 exports.addCourse = asyncHandler(async(req, res, next) =>{
-    req.body.bootcamp = req.params.bootcampId
+    req.body.bootcamp = req.params.bootcampId;
+    req.body.user = req.user.id;
 
     const bootcamp = await Bootcamp.findById(req.params.bootcampId);
 
@@ -83,8 +84,8 @@ exports.updateCourse = asyncHandler(async(req, res, next) =>{
         new: true,
         runValidators: true
     });
-
     
+
     res.status(200).json({
          success: true,
          data: course
@@ -105,7 +106,7 @@ exports.deleteCourse = asyncHandler(async(req, res, next) =>{
 
     await course.remove()
 
-    
+
     res.status(200).json({
          success: true,
          msg: 'Course deleted succesfully'

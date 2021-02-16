@@ -2,6 +2,8 @@ const jwt = require('jsonwebtoken');
 const asyncHandler = require('./asyncHandler');
 const ErrorResponse = require('../utils/errorResponse');
 const User = require('../models/User');
+const Course = require('../models/Course');
+const Bootcamp = require('../models/Bootcamp');
 
 
 
@@ -40,3 +42,31 @@ exports.authorize = (...roles) => {
         next();
     }
 }
+
+//Verify BootcampOwner
+exports.isBootcampOwner = asyncHandler(async(req, res, next) => {
+    const bootcamp = await Bootcamp.findById(req.params.id);
+    if(!bootcamp){
+        return next(new ErrorResponse(`Bootcamp not found with id: ${req.params.id}`, 404))
+    }
+    // console.log(bootcamp)
+    if (!bootcamp.user.equals(req.user._id) && req.user.role !== 'admin') {
+        return next(new ErrorResponse(`Not authorized to access this route`, 400));
+    }
+    next();
+});
+
+exports.isCourseOwner = asyncHandler(async(req, res, next) => {
+    const course = await Course.findById(req.params.id);
+    if(!course){
+        return next(new ErrorResponse(`Course not found with id: ${req.params.id}`, 404))
+    }
+    // console.log(bootcamp)
+    if (!course.user.equals(req.user._id) && req.user.role !== 'admin') {
+        return next(new ErrorResponse(`User ${req.user._id} is not authorized to modify this course ${req.params.id}`, 400));
+    }
+    next();
+});
+
+
+

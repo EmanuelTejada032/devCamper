@@ -61,8 +61,6 @@ exports.createBootcamp = asyncHandler( async (req, res, next) => {
 exports.updateBootcamp = asyncHandler( async (req, res, next) => {
 
         let bootcamp = await Bootcamp.findById(req.params.id)
-        
-
         if(!bootcamp){
             return next(new ErrorResponse(`Bootcamp not found with id: ${req.params.id}`, 404))
         }
@@ -164,6 +162,5 @@ exports.bootcampPhotoUpload = asyncHandler( async (req, res, next) => {
             photo: file.name
         })
     })
-    
 
 })
