@@ -47,6 +47,15 @@ UserSchema.pre('save', async function(next) {
     this.password = await bcrypt.hash(this.password, salt);
 });
 
+UserSchema.pre("findOneAndUpdate", async function() {
+    const docToUpdate = await this.model
+      .findOne(this.getQuery())
+      .select("+password");
+    const salt = await bcrypt.genSalt(10);
+    docToUpdate.password = await bcrypt.hash(docToUpdate.password, salt);
+    docToUpdate.save();
+  });
+
 // Sign JWT and return
 UserSchema.methods.getSignedJwtToken = function(){
     return jwt.sign({ id: this._id}, process.env.JWT_SECRET, {
