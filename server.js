@@ -21,6 +21,7 @@ dotenv.config({ path: './config/config.env' });
  const courses = require('./routes/courses')
  const auth = require('./routes/auth');
  const users = require('./routes/users');
+ const reviews = require('./routes/reviews');
 
 
 
@@ -57,6 +58,7 @@ app.use('/api/v1/bootcamps', bootcamps);
 app.use('/api/v1/courses', courses);
 app.use('/api/v1/auth', auth);
 app.use('/api/v1/auth/users', users)
+app.use('/api/v1/reviews', reviews)
 app.use(errorHandler)
 
 
