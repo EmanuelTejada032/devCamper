@@ -4,6 +4,7 @@ const ErrorResponse = require('../utils/errorResponse');
 const User = require('../models/User');
 const Course = require('../models/Course');
 const Bootcamp = require('../models/Bootcamp');
+const Review = require('../models/Review')
 
 
 
@@ -26,6 +27,7 @@ exports.protect = asyncHandler(async(req, res, next) => {
         //Verify token
         const decoded = jwt.verify(token, process.env.JWT_SECRET)
         req.user = await User.findById(decoded.id)
+        console.log('Protect Ran')
         next()
     }catch(err){
         return next(new ErrorResponse('Not authorized to access this route', 401));
@@ -36,9 +38,11 @@ exports.protect = asyncHandler(async(req, res, next) => {
 //Allow access to routes to an specific roles
 exports.authorize = (...roles) => {
     return (req, res ,next) => {
+      
         if(!roles.includes(req.user.role)){
             return next(new ErrorResponse(`User role ${req.user.role} is not authorized to access this route `, 403))
         }
+
         next();
     }
 }
@@ -64,6 +68,19 @@ exports.isCourseOwner = asyncHandler(async(req, res, next) => {
     // console.log(bootcamp)
     if (!course.user.equals(req.user._id) && req.user.role !== 'admin') {
         return next(new ErrorResponse(`User ${req.user._id} is not authorized to modify this course ${req.params.id}`, 400));
+    }
+    next();
+});
+
+
+exports.isReviewOwner = asyncHandler(async(req, res, next) => {
+    const review = await Review.findById(req.params.id);
+    if(!review){
+        return next(new ErrorResponse(`Review not found with id: ${req.params.id}`, 404))
+    }
+    // console.log(bootcamp)
+    if (!review.user.equals(req.user._id) && req.user.role !== 'admin') {
+        return next(new ErrorResponse(`User ${req.user._id} is not authorized to modify this review ${req.params.id}`, 400));
     }
     next();
 });

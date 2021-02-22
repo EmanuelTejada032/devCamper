@@ -40,8 +40,7 @@ exports.getReview = asyncHandler(async (req, res, next) => {
 
 //@desc      Add a review to a bootcamp
 //@route     POST /api/v1/bootcamps/:bootcampId/reviews
-
-//@access    Public
+//@access    Private
 
 exports.addReview = asyncHandler(async (req, res, next) => {
   req.body.user = req.user.id;
@@ -63,5 +62,60 @@ exports.addReview = asyncHandler(async (req, res, next) => {
   return res.status(200).json({
     success: true,
     data: review,
+  });
+});
+
+//@desc      Update a Bootcamp
+//@route     PUT /api/v1/review/id
+//@access    Private
+
+exports.updateReview = asyncHandler(async (req, res, next) => {
+
+  let review = await Review.findById(req.params.id);
+
+  if (!review) {
+    return next(
+      new ErrorResponse(
+        `Review not found with id ${req.params.bootcampId}`,
+        404
+      )
+    );
+  }
+
+  review = await Review.findByIdAndUpdate(req.params.id, req.body, {
+     new: true,
+     runValidators: true
+  });
+
+  await review.save();
+
+  return res.status(200).json({
+    success: true,
+    data: review,
+  });
+});
+
+//@desc      Update a Bootcamp
+//@route     PUT /api/v1/review/id
+//@access    Private
+
+exports.deleteReview = asyncHandler(async (req, res, next) => {
+
+  let review = await Review.findById(req.params.id);
+
+  if (!review) {
+    return next(
+      new ErrorResponse(
+        `Review not found with id ${req.params.bootcampId}`,
+        404
+      )
+    );
+  }
+
+  await review.remove();
+
+  return res.status(200).json({
+    success: true,
+    message : 'Review succesfully deleted ',
   });
 });
