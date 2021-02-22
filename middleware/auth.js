@@ -12,8 +12,11 @@ const Review = require('../models/Review')
 exports.protect = asyncHandler(async(req, res, next) => {
     let token;
     if(req.headers.authorization && req.headers.authorization.startsWith('Bearer')){
+        //set token on headers
         token = req.headers.authorization.split(' ')[1];
-    }
+    } 
+
+    //Set token using cookies 
     // else if (req.cookies.token){
     //     token = req.cookies.token;
     // }
