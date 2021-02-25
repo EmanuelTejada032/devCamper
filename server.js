@@ -50,7 +50,7 @@ app.use(cookieParser());
 app.use(mongoSanitize());
 
 //Bringing helmet to set some security headers
-app.use(helmet());
+app.use(helmet({contentSecurityPolicy: false }));
 
 
 //Bringing xss to avoid script tag from the body input
