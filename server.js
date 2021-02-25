@@ -6,7 +6,18 @@ const morgan = require('morgan');
 const connectDB = require('./config/db');
 const errorHandler = require('./middleware/error');
 const fileUpload = require('express-fileupload');
-const cookieParser = require('cookie-parser')
+const cookieParser = require('cookie-parser');
+const mongoSanitize = require('express-mongo-sanitize');
+const helmet = require('helmet');
+const xss = require('xss-clean');
+const rateLimit = require('express-rate-limit');
+const hpp = require('hpp');
+const cors = require('cors');
+
+
+
+
+const app = express();
 
 
 
@@ -25,13 +36,39 @@ dotenv.config({ path: './config/config.env' });
 
 
 
-const app = express();
+
 
 //using express-fileupload
-app.use(fileUpload())
+app.use(fileUpload());
+
+
 
 // Set cookie parser ready to use
-app.use(cookieParser())
+app.use(cookieParser());
+
+//Bring express mongo sanitize to sanitize our app
+app.use(mongoSanitize());
+
+//Bringing helmet to set some security headers
+app.use(helmet());
+
+
+//Bringing xss to avoid script tag from the body input
+app.use(xss());
+
+//Rate limiting
+const limiter = rateLimit({
+    windowMs: 10 * 60 * 1000, // time limit 10 mins
+    max: 50 //50 request max
+});
+
+app.use(limiter);
+
+//prevent http params pollution
+app.use(hpp());
+
+//Bring cors to make API public and share with all domains coming from outside of ours
+app.use(cors());
 
 //Serving static folder public
 app.use(express.static(path.join(__dirname, 'public')))
